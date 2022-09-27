@@ -4,7 +4,7 @@ from photonprops.commons.pulse import ChirpedPulse
 
 HBAR = 0.6582173  # meV*ps
 
-def twolevel_system(tau1=1, tau2=1, area1=1*np.pi, area2=0, det1=0, det2=0, alpha1=0, alpha2=0, delay=1, gamma_e=1/100, epsilon=0.01, dt_1=0.1, dt_2=1, options=qt.Options(atol=1e-7), mode="pop"):
+def twolevel_system(tau1=1, tau2=1, area1=1*np.pi, area2=0, det1=0, det2=0, alpha1=0, alpha2=0, delay=1, gamma_e=1/100, epsilon=0.01, dt_1=0.1, dt_2=1, options=qt.Options(atol=1e-7), mode="pop", tend=None):
     """
     in qutip, every energy has to be provided in 1/ps
     Here, a rotating frame with the unsplit exciton energy is chosen. 
@@ -69,6 +69,8 @@ def twolevel_system(tau1=1, tau2=1, area1=1*np.pi, area2=0, det1=0, det2=0, alph
     t_axis1 = np.arange(0, t_off, dt_1)
     t_axis2 = np.arange(t_off, t_end, dt_2)  # note that arange does not include the final value so t_off is not in both arrays
     t_axis = np.append(t_axis1, t_axis2)
+    if tend is not None:
+        t_axis = np.arange(0, tend, dt_1)
 
     if mode == "pop":
         x_occ, polar_gx = qt.mesolve(H, g, t_axis, c_ops=c_ops, e_ops=[n_x, p_gx], options=options).expect
@@ -96,7 +98,7 @@ def twolevel_system(tau1=1, tau2=1, area1=1*np.pi, area2=0, det1=0, det2=0, alph
         g2_tau = G2_tau / brightness**2
 
         g2 = 2 * np.abs(np.trapz(g2_tau, tau_axis))
-        # g2=0
+
         a_op = sm.dag()
         b_op = sm
         # estimate for the Indistinguishability, assuming g2 is negligible. See https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.128.093603, Suppl. Material

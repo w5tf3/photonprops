@@ -106,29 +106,30 @@ def biexciton_system(tau1=1, tau2=1, area1=1*np.pi, area2=0, det1=0, det2=0, alp
         # operators for 2-time correlations
         # <A(t)B(t+tau)C(t)>
         a_op = sm.dag()
-        b_op = sm.dag() * sm
+        b_op = sm.dag() * sm  # = |x><x|
         c_op = sm
 
         # Expectationvalue of the occupation to calculate the Brightness
         # which we need for normalization
         n_ex = qt.mesolve(H, g, t_axis, c_ops, e_ops=[_n], options=options).expect[0]
-        brightness = gamma_e * np.trapz(n_ex, t_axis)
-
+        brightness_nogamma = np.trapz(n_ex, t_axis)
+        brightness = gamma_e * brightness_nogamma
         # two-time correlation
         G2_t_tau = gamma_e ** 2 * qt.correlation_3op_2t(H, g, t_axis, tau_axis, c_ops, a_op, b_op, c_op, solver='me',
                                                       options=options)
         G2_tau = np.abs(np.trapz(G2_t_tau.transpose(), t_axis))
         g2_tau = G2_tau / brightness**2
 
+        # *2 to account for negative tau
         g2 = 2 * np.abs(np.trapz(g2_tau, tau_axis))
-        # g2=0
         a_op = sm.dag()
         b_op = sm
         # estimate for the Indistinguishability, assuming g2 is negligible. See https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.128.093603, Suppl. Material
         G1_t_tau = qt.correlation_2op_2t(H, g, t_axis, tau_axis, c_ops, a_op, b_op, solver='me',
                                                       options=options)
         G1_tau = np.trapz(np.abs(G1_t_tau.transpose())**2, t_axis)
-        g1 = 2 * gamma_e**2 * np.trapz(G1_tau, tau_axis) / brightness**2                            
+        # *2 to account for negative tau
+        g1 = 2 * gamma_e**2 * np.trapz(G1_tau, tau_axis) / brightness**2                        
         return brightness, g1, g2
     else:
         print("unsupported mode. choose pop or g2")
