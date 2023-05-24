@@ -26,10 +26,10 @@ def calc_concurrence(system,options,return_photoncounts=False):
 
     g2s = parallel_map(system,args,task_kwargs=options)
     density_matrix = np.zeros([4,4], dtype=complex)
-    density_matrix[0,0] = g2s[0]  # xx,xx
-    density_matrix[3,3] = g2s[1]  # yy,yy
-    density_matrix[1,1] = g2s[2]  # xy,xy
-    density_matrix[2,2] = g2s[3]  # yx,yx
+    density_matrix[0,0] = np.real(g2s[0])  # xx,xx
+    density_matrix[3,3] = np.real(g2s[1])  # yy,yy
+    density_matrix[1,1] = np.real(g2s[2])  # xy,xy
+    density_matrix[2,2] = np.real(g2s[3])  # yx,yx
     
     density_matrix[0,1] = g2s[4]  # xx,xy
     density_matrix[1,0] = np.conj(density_matrix[0,1])
@@ -49,5 +49,5 @@ def calc_concurrence(system,options,return_photoncounts=False):
     norm = np.trace(density_matrix)
     density_matrix = density_matrix / norm
     if return_photoncounts:
-        return concurrence(density_matrix), g2s[0], g2s[1], g2s[2], g2s[3]
+        return concurrence(density_matrix), np.real(g2s[0]), np.real(g2s[1]), np.real(g2s[2]), np.real(g2s[3])
     return concurrence(density_matrix)
