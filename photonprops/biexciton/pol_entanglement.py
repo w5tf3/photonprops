@@ -8,7 +8,7 @@ def concurrence(rho):
     _eigvals = np.sqrt(np.sort(_eigvals))
     return np.max([0.0,_eigvals[-1]-np.sum(_eigvals[:-1])])
 
-def calc_concurrence(system,options):
+def calc_concurrence(system,options,return_photoncounts=False):
     options = {"options": options}
     args = ["ax.dag(),ax.dag()*ax,ax",   
             "ay.dag(),ay.dag()*ay,ay",
@@ -48,4 +48,6 @@ def calc_concurrence(system,options):
     
     norm = np.trace(density_matrix)
     density_matrix = density_matrix / norm
+    if return_photoncounts:
+        return concurrence(density_matrix), g2s[0], g2s[1], g2s[2], g2s[3]
     return concurrence(density_matrix)
