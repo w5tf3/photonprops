@@ -12,13 +12,15 @@ def energies(delta_b=4., delta_0=0.):
     E_B = -delta_b
     return E_X, E_Y, E_B
 
-def g2_b_cav(ops,options):
-    a_op,b_op,c_op = ops.split(",")
+def g2_b_cav(ops, options, return_tauaxis=False):
+    a_op,b_op,c_op = ops.split(";")
     options["a_op"] = a_op
     options["b_op"] = b_op
     options["c_op"] = c_op
     options["mode"] = "g2"
-    g2,_,_ = biexciton_system_cav(**options)
+    g2,g2_t_tau,tau_axis = biexciton_system_cav(**options)
+    if return_tauaxis:
+        return g2, g2_t_tau, tau_axis
     return g2
 
 def biexciton_system_cav(tau1=1, tau2=1, area1=1*np.pi, area2=0, det1=0, det2=0, g_cav=0.25, kappa=1.0, alpha1=0, alpha2=0, pol1_x=1, pol2_x=1, t01=10, t02=10, delta_b=4, delta_0=0.0, gamma_e=1/100, gamma_b=2/100, epsilon=0.01, dt_1=0.1, dt_2=1, tend=100, n_phot=1, options=qt.Options(atol=1e-7), mode="pop", exp_t=False,a_op="ax.dag()",b_op="ax.dag()*ax",c_op="ax", abs=False, initial_state="g"):
@@ -137,9 +139,8 @@ def biexciton_system_cav(tau1=1, tau2=1, area1=1*np.pi, area2=0, det1=0, det2=0,
                                                       options=options)
         if abs:
             G2_t_tau = np.abs(G2_t_tau)
-        G2_tau = np.trapz(G2_t_tau.transpose(), t_axis)
-        # return G2_tau, tau_axis
-        _g2 = np.trapz(G2_tau, tau_axis)
+        G2_tau = np.trapz(G2_t_tau, t_axis, axis=0) 
+        _g2 = np.trapz(G2_tau, tau_axis, axis=0)
         return _g2, G2_t_tau, tau_axis
         
     else:
