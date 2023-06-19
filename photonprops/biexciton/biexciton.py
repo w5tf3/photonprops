@@ -11,7 +11,7 @@ def energies(delta_b=4., delta_0=0.):
     E_B = -delta_b
     return E_X, E_Y, E_B
 
-def g2_b(ops,options, return_tauaxis=False):
+def g2_b(ops, options, return_tauaxis=False):
     a_op,b_op,c_op = ops.split(";")
     options["a_op"] = a_op
     options["b_op"] = b_op

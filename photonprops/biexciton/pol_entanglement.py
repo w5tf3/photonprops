@@ -86,5 +86,5 @@ def calc_concurrence_reuse(system,options,return_photoncounts=False, return_rho=
     if return_rho:
         return concurrence(density_matrix/norm), density_matrix
     if return_photoncounts:
-        return concurrence(density_matrix/norm), np.real(g2s[0]), np.real(g2s[1]), np.real(g2s[2]), np.real(g2s[3])
+        return concurrence(density_matrix/norm), np.real(g2s[0][0]), np.real(g2s[1][0]), np.real(g2s[0][1]), np.real(g2s[1][1])
     return concurrence(density_matrix/norm)
