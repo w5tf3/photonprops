@@ -78,3 +78,14 @@ class ChirpedPulse(Pulse):
         returns ratio of pulse area chirped/unchirped: tau / sqrt(tau * tau_0)
         """
         return np.sqrt(self.tau / self.tau_0)
+
+class CWLaser(Pulse):
+    """
+    cw-laser, i.e., it is just on the whole time without any switch-on process
+    """
+
+    def __init__(self, e0, e_start=0, polar_x=1):
+        super().__init__(tau=5, e_start=e_start, e0=e0, polar_x=polar_x)
+
+    def get_envelope(self, t):
+        return self.e0
